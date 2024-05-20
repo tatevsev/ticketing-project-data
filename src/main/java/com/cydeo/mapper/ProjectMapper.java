@@ -24,3 +24,8 @@ public class ProjectMapper {
     }
 
 }
+
+/*
+why we are adding @component ?
+if a class has a dependency of other class, meaning being injected somewhere else we need to annotate that class with @component
+ */

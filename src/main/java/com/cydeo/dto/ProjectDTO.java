@@ -14,6 +14,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ProjectDTO {
 
+    private Long id; //we put this ID specifically for task create @postmapping when we were creating Task mapper didnt know how to save the foreign key for Project field
+
     @NotBlank
     private String projectName;
 

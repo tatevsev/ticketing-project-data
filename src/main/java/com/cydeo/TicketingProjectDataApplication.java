@@ -14,7 +14,7 @@ public class TicketingProjectDataApplication {
         SpringApplication.run(TicketingProjectDataApplication.class, args);
     }
 
-    @Bean
+    @Bean //ModelMapper is n ot our class therefore we using @Bean
     public ModelMapper mapper(){
         return new ModelMapper();
     }
