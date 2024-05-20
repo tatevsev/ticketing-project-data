@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,10 +39,29 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void update(TaskDTO task) {
 
+      Optional <Task> task1 = taskRepository.findById(task.getId());
+        Task convertedTask = taskMapper.convertToEntity(task);
+
+        if(task1.isPresent()){
+            convertedTask.setTaskStatus(task1.get().getTaskStatus());
+            convertedTask.setAssignedDate(task1.get().getAssignedDate());
+            taskRepository.save(convertedTask);
+        }
+
     }
 
     @Override
     public void delete(Long id) {
+        Optional<Task> foundTask = taskRepository.findById(id);
+
+        if(foundTask.isPresent()){
+            foundTask.get().setIsDeleted(true);
+            taskRepository.save(foundTask.get());
+        }
+
+
+
+
 
     }
 
@@ -55,6 +75,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDTO findById(Long id) {
-        return taskMapper.convertToDTO(taskRepository.findById(id).get());
+        Optional<Task> task = taskRepository.findById(id);
+
+        if(task.isPresent()){
+            return taskMapper.convertToDTO(task.get());
+        }
+        return null;
     }
+
 }
