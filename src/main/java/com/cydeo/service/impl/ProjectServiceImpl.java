@@ -79,7 +79,15 @@ public class ProjectServiceImpl implements ProjectService {
     public void delete(String code) {
         Project project = projectRepository.findByProjectCode(code);
         project.setIsDeleted(true);
+
+        //once the project is deleted it will still be saved in db but we still want to use that project code for the future projects, therefore we would concatenate the projectCode with "-"
+        project.setProjectCode(project.getProjectCode() + '-' + project.getId());
+
         projectRepository.save(project);
+
+        //if the project is deleted we need to make sure that tasks that belong to that project are also deleted
+
+        taskService.deleteByProject(projectMapper.convertToDto(project));
 
     }
 
@@ -88,6 +96,10 @@ public class ProjectServiceImpl implements ProjectService {
        Project project = projectRepository.findByProjectCode(projectCode);
        project.setProjectStatus(Status.COMPLETE);
         projectRepository.save(project);
+
+        //if we project is completed we need to set all the tasks to complete as well
+        taskService.completeByProject(projectMapper.convertToDto(project));
+
     }
 
     @Override
@@ -113,5 +125,14 @@ public class ProjectServiceImpl implements ProjectService {
                    return obj;
 
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectDTO> listAllNonCompletedByAssignedManager(UserDTO assignedManager) {
+        List<Project> projects = projectRepository.
+                findAllByProjectStatusIsNotAndAssignedManager(Status.COMPLETE,userMapper.convertToEntity(assignedManager));
+
+
+        return projects.stream().map(projectMapper::convertToDto).collect(Collectors.toList());
     }
 }
