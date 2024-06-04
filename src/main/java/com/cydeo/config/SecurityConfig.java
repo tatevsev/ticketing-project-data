@@ -1,5 +1,6 @@
 package com.cydeo.config;
 
+import com.cydeo.service.SecurityService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,13 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+
+
+    private final SecurityService securityService;
+
+    public SecurityConfig(SecurityService securityService) {
+        this.securityService = securityService;
+    }
 //
 //    @Bean
 //    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
@@ -56,14 +64,21 @@ public class SecurityConfig {
              //   .httpBasic()
                 .formLogin()//allow us to use our own defined login page
                   .loginPage("/login")
-                  .defaultSuccessUrl("/welcome")
+            //      .defaultSuccessUrl("/welcome")
+                .successHandler()
                   .failureUrl("/login?error=true")
                   .permitAll()
                 .and()
                 .logout()
                   .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                   .logoutSuccessUrl("/login")
-                .and().build();
+                .and()
+                .rememberMe()
+                   .tokenValiditySeconds(120)
+                   .key("cydeo")//behin the scenes remember by that key
+                   .userDetailsService(securityService)  //we need to inject SecurityService which convert that user through UserPrincipal
+                .and()
+                .build();
 
 
 
