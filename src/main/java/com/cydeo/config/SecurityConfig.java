@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,10 +38,10 @@ public class SecurityConfig {
         return http
                 .authorizeRequests()//this make all our pages authorized
 //                .antMatchers("/user/**").hasRole("ADMIN")//we give authority to ADMIN modify anything under UserController
-                .antMatchers("/user/**").hasAuthority("ROLE_ADMIN")
-//                .antMatchers("/project/**").hasRole("MANAGER")
-//                .antMatchers("/task/employee/**").hasRole("EMPLOYEE")
-//                .antMatchers("/task/**").hasRole("MANAGER")
+                .antMatchers("/user/**").hasAuthority("Admin")
+                .antMatchers("/project/**").hasAuthority("Manager")
+                .antMatchers("/task/employee/**").hasAuthority("Employee")
+                .antMatchers("/task/**").hasAuthority("Manager")
                // .antMatchers("/task/**").hasAnyRole("EMPLOYEE", "MANAGER","ADMIN")
               //  .antMatchers("/task/**").hasAuthority("ROLE_EMPLOYEE")
                 .antMatchers(
@@ -54,10 +55,14 @@ public class SecurityConfig {
                 .and()
              //   .httpBasic()
                 .formLogin()//allow us to use our own defined login page
-                .loginPage("/login")
-                .defaultSuccessUrl("/welcome")
-                .failureUrl("/login?error=true")
-                .permitAll()
+                  .loginPage("/login")
+                  .defaultSuccessUrl("/welcome")
+                  .failureUrl("/login?error=true")
+                  .permitAll()
+                .and()
+                .logout()
+                  .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                  .logoutSuccessUrl("/login")
                 .and().build();
 
 
