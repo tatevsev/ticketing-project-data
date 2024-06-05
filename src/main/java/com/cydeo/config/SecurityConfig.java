@@ -77,7 +77,7 @@ public class SecurityConfig {
                 .and()
                 .rememberMe()
                    .tokenValiditySeconds(120)
-                   .key("cydeo")//behin the scenes remember by that key
+                   .key("cydeo")//behind the scenes remember by that key
                    .userDetailsService(securityService)  //we need to inject SecurityService which convert that user through UserPrincipal
                 .and()
                 .build();
